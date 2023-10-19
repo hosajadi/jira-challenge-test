@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int        @default(autoincrement()) @id
+  firstName  String
+  lastName   String
+  email      String
+  password   String
+  tasks      Task[]     @relation("user_task")
+}
+
+model Task{
+  id            String       @id @default(uuid())
+  title         String
+  description   String
+  status        TaskStatus   @default(todo)
+  owner         User?        @relation("user_task", fields: [ownerId], references: [id])
+  ownerId       Int?
+}
+
+enum TaskStatus{
+    todo
+    inProgress
+    done
+}

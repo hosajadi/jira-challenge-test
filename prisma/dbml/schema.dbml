@@ -1,0 +1,29 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table User {
+  id Int [pk, increment]
+  firstName String [not null]
+  lastName String [not null]
+  email String [not null]
+  password String [not null]
+  tasks Task [not null]
+}
+
+Table Task {
+  id String [pk]
+  title String [not null]
+  description String [not null]
+  status TaskStatus [not null, default: 'todo']
+  owner User
+  ownerId Int
+}
+
+Enum TaskStatus {
+  todo
+  inProgress
+  done
+}
+
+Ref: Task.ownerId > User.id

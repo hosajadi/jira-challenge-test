@@ -1,0 +1,50 @@
+version: '3.7'
+services:
+  barzin-api-server:
+    container_name: barzin-api-server
+    hostname: barzin-api-server
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PORT: ${API_SERVICE_PORT}
+    restart: always
+    networks:
+      - postgres
+    ports:
+      - 3000:${API_SERVICE_PORT}
+    environment:
+      NEST_ENV: ${NEST_ENV}
+      JWT_SECRET: ${JWT_SECRET}
+      ACCESS_TOKEN_EXPIRE_IN: ${ACCESS_TOKEN_EXPIRE_IN}
+      REFRESH_TOKEN_EXPIRE_IN: ${REFRESH_TOKEN_EXPIRE_IN}
+    depends_on:
+      - barzin-database
+    command:
+      - sh init.sh
+
+  barzin-database:
+    container_name: barzin-database
+    hostname: barzin-database
+    image: postgres:latest
+    volumes:
+      - ./volume:/var/lib/postgresql
+      - ./postgres-data:/var/lib/postgresql/data
+    networks:
+      - postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    restart: always
+
+networks:
+  postgres:
+    driver: bridge
+
+volumes:
+  postgres-db:
+    driver: local
+
